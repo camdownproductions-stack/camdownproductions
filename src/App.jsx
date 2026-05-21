@@ -178,8 +178,10 @@ function Header() {
           <div className="dropdown-panel" aria-label="Portfolio submenu">
             <a href="#photos">Wedding Photography</a>
             <a href="#videos">Wedding Films</a>
-            <a href="#photos-preWedding">Pre-Wedding</a>
-            <a href="#photos-maternity">Maternity</a>
+            <a href="#prewedding-films">PreWedding Films</a>
+            <a href="#prewedding-pictures">PreWedding Pictures</a>
+            <a href="#maternity-videos">Maternity Videos</a>
+            <a href="#maternity-pictures">Maternity Pictures</a>
           </div>
         </div>
       </nav>
@@ -212,7 +214,7 @@ function Hero() {
           Wedding films, photographs, and intimate milestones arranged into a timeless
           portfolio experience.
         </p>
-        <a className="hero-link" href="#videos">
+        <a className="hero-link" href="#portfolio">
           Explore portfolio
         </a>
       </div>
@@ -242,8 +244,19 @@ function MediaCard({ item, categoryLabel, onOpen }) {
 }
 
 function FeaturedCollages({ media, onOpen }) {
+  function anchorFor(sectionId, categoryId) {
+    const anchors = {
+      "videos-preWedding": "prewedding-films",
+      "photos-preWedding": "prewedding-pictures",
+      "videos-maternity": "maternity-videos",
+      "photos-maternity": "maternity-pictures"
+    };
+
+    return anchors[`${sectionId}-${categoryId}`] || `${sectionId}-${categoryId}`;
+  }
+
   return (
-    <section className="collage-section" aria-label="Featured portfolio collages">
+    <section className="collage-section" id="portfolio" aria-label="Featured portfolio collages">
       <div className="section-heading">
         <p className="eyebrow">Featured stories</p>
         <h2>Recent Collages</h2>
@@ -251,14 +264,15 @@ function FeaturedCollages({ media, onOpen }) {
       <div className="collage-groups">
         {sections.map((section) => {
           const tiles = section.categories.flatMap((category) =>
-            (media[section.id]?.[category.id] || []).slice(0, 3).map((item) => ({
+            (media[section.id]?.[category.id] || []).slice(0, 3).map((item, itemIndex) => ({
               ...item,
-              categoryLabel: category.label
+              categoryLabel: category.label,
+              anchorId: itemIndex === 0 ? anchorFor(section.id, category.id) : undefined
             }))
           );
 
           return (
-            <article className="collage-group" key={section.id}>
+            <article className="collage-group" id={section.id} key={section.id}>
               <div className="collage-heading">
                 <p className="eyebrow">{section.eyebrow}</p>
                 <h3>{section.title}</h3>
@@ -267,6 +281,7 @@ function FeaturedCollages({ media, onOpen }) {
                 {tiles.slice(0, 6).map((item, index) => (
                   <button
                     className={`collage-tile tile-${index + 1}`}
+                    id={item.anchorId || undefined}
                     type="button"
                     key={`${section.id}-${item.categoryLabel}-${item.id}`}
                     onClick={() => onOpen(item)}
@@ -511,26 +526,6 @@ function App() {
           <p>
             A quiet, elegant space for wedding films, photography, and family milestones.
           </p>
-        </section>
-
-        <section className="portfolio-wrap" id="portfolio">
-          <div className="section-heading portfolio-heading">
-            <p className="eyebrow">Portfolio</p>
-            <h2>Films & Photographs</h2>
-            <p>
-              Choose a collection, open a story category, and browse the uploaded Drive
-              media in a smooth carousel.
-            </p>
-          </div>
-
-          {sections.map((section) => (
-            <PortfolioSection
-              key={section.id}
-              section={section}
-              media={media}
-              onOpen={openItem}
-            />
-          ))}
         </section>
 
         <section className="contact" id="contact">
