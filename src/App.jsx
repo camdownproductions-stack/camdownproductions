@@ -170,12 +170,17 @@ async function fetchDriveFolder(folderId, apiKey) {
 function Header() {
   return (
     <header className="site-header" id="top">
+      <nav className="nav-group nav-left" aria-label="Primary navigation left">
+        <a href="#top">Home</a>
+        <a href="#portfolio">Portfolio</a>
+      </nav>
       <a className="brand" href="#top" aria-label="Camdown Productions home">
         <span>Camdown</span>
         <small>Productions</small>
       </a>
-      <nav aria-label="Primary navigation">
-        <a href="#portfolio">Portfolio</a>
+      <nav className="nav-group nav-right" aria-label="Primary navigation right">
+        <a href="#videos">Films</a>
+        <a href="#photos">Photography</a>
         <a href="#contact">Contact</a>
       </nav>
     </header>
@@ -191,11 +196,11 @@ function Hero() {
         <span />
       </div>
       <div className="hero-copy">
-        <p className="eyebrow">Film & photo portfolio</p>
+        <p className="eyebrow">Beautiful films... beautiful frames</p>
         <h1>Camdown Productions</h1>
         <p>
-          Wedding films, photographs, and intimate milestones arranged from Google Drive
-          into a smooth portfolio experience.
+          Wedding films, photographs, and intimate milestones arranged into a timeless
+          portfolio experience.
         </p>
         <a className="hero-link" href="#videos">
           Explore portfolio
@@ -402,8 +407,8 @@ function App() {
             <p className="eyebrow">Portfolio</p>
             <h2>Films & Photographs</h2>
             <p>
-              Browse the two main collections below, then open each category to view
-              its Google Drive media.
+              Choose a collection, open a story category, and browse the uploaded Drive
+              media in a smooth carousel.
             </p>
           </div>
 
