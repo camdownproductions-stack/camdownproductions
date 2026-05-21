@@ -175,8 +175,7 @@ function Header() {
         <small>Productions</small>
       </a>
       <nav aria-label="Primary navigation">
-        <a href="#videos">Videos</a>
-        <a href="#photos">Photos</a>
+        <a href="#portfolio">Portfolio</a>
         <a href="#contact">Contact</a>
       </nav>
     </header>
@@ -398,14 +397,25 @@ function App() {
           </div>
         </section>
 
-        {sections.map((section) => (
-          <PortfolioSection
-            key={section.id}
-            section={section}
-            media={media}
-            onOpen={setActiveItem}
-          />
-        ))}
+        <section className="portfolio-wrap" id="portfolio">
+          <div className="section-heading portfolio-heading">
+            <p className="eyebrow">Portfolio</p>
+            <h2>Films & Photographs</h2>
+            <p>
+              Browse the two main collections below, then open each category to view
+              its Google Drive media.
+            </p>
+          </div>
+
+          {sections.map((section) => (
+            <PortfolioSection
+              key={section.id}
+              section={section}
+              media={media}
+              onOpen={setActiveItem}
+            />
+          ))}
+        </section>
 
         <section className="contact" id="contact">
           <p className="eyebrow">Bookings & collaborations</p>

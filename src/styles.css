@@ -182,6 +182,7 @@ h3 {
 }
 
 .intro,
+.portfolio-wrap,
 .portfolio-section,
 .contact {
   padding: clamp(64px, 9vw, 124px) clamp(20px, 5vw, 64px);
@@ -224,8 +225,21 @@ h3 {
   text-align: center;
 }
 
-.portfolio-section:nth-of-type(odd) {
+.portfolio-wrap {
   background: #efe4d8;
+}
+
+.portfolio-wrap .portfolio-section {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.portfolio-wrap .portfolio-section + .portfolio-section {
+  padding-top: 0;
+}
+
+.portfolio-heading {
+  margin-bottom: 0;
 }
 
 .category-list {
