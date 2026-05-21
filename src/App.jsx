@@ -172,15 +172,25 @@ function Header() {
     <header className="site-header" id="top">
       <nav className="nav-group nav-left" aria-label="Primary navigation left">
         <a href="#top">Home</a>
-        <a href="#portfolio">Portfolio</a>
+        <a href="#about">About</a>
+        <div className="menu-dropdown">
+          <a className="dropdown-trigger" href="#portfolio">Portfolio</a>
+          <div className="dropdown-panel" aria-label="Portfolio submenu">
+            <a href="#photos">Wedding Photography</a>
+            <a href="#videos">Wedding Films</a>
+            <a href="#photos-preWedding">Pre-Wedding</a>
+            <a href="#photos-maternity">Maternity</a>
+          </div>
+        </div>
       </nav>
       <a className="brand" href="#top" aria-label="Camdown Productions home">
         <span>Camdown</span>
-        <small>Productions</small>
+        <strong>Productions</strong>
+        <small>Beautiful films... beautiful frames</small>
       </a>
       <nav className="nav-group nav-right" aria-label="Primary navigation right">
-        <a href="#videos">Films</a>
-        <a href="#photos">Photography</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#kind-words">Kind Words</a>
         <a href="#contact">Contact</a>
       </nav>
     </header>
@@ -231,7 +241,7 @@ function MediaCard({ item, categoryLabel, onOpen }) {
   );
 }
 
-function CategoryPanel({ sectionId, category, items, defaultOpen, onOpen }) {
+function CategoryPanel({ panelId, sectionId, category, items, defaultOpen, onOpen }) {
   const carouselId = `${sectionId}-${category.id}`;
 
   function scroll(direction) {
@@ -243,7 +253,7 @@ function CategoryPanel({ sectionId, category, items, defaultOpen, onOpen }) {
   }
 
   return (
-    <details className="category-panel" open={defaultOpen}>
+    <details className="category-panel" id={panelId} open={defaultOpen}>
       <summary>
         <span>{category.label}</span>
         <small>{items.length} item{items.length === 1 ? "" : "s"}</small>
@@ -282,6 +292,7 @@ function PortfolioSection({ section, media, onOpen }) {
         {section.categories.map((category, index) => (
           <CategoryPanel
             key={`${section.id}-${category.id}`}
+            panelId={`${section.id}-${category.id}`}
             sectionId={section.id}
             category={category}
             items={media[section.id]?.[category.id] || []}
@@ -392,7 +403,7 @@ function App() {
       <main>
         <Hero />
 
-        <section className="intro" aria-label="Portfolio introduction">
+        <section className="intro" id="about" aria-label="Portfolio introduction">
           <p>
             Select a section, open a category, and move through each story with a smooth
             horizontal carousel.
@@ -400,6 +411,14 @@ function App() {
           <div className="status" role="status">
             {status} Showing {totalItems} portfolio item{totalItems === 1 ? "" : "s"}.
           </div>
+        </section>
+
+        <section className="kind-words" id="kind-words">
+          <p className="eyebrow">Your kind words</p>
+          <h2>Stories preserved with care.</h2>
+          <p>
+            A quiet, elegant space for wedding films, photography, and family milestones.
+          </p>
         </section>
 
         <section className="portfolio-wrap" id="portfolio">
