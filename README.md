@@ -1,8 +1,21 @@
 # Camdown Productions React Portfolio
 
-A refined React film-portfolio website inspired by the shared reference page. It is set up for GitHub Pages and can later connect to a separate media API or static media JSON source.
+A React portfolio website for Camdown Productions, built for GitHub Pages.
 
-## Run locally
+The portfolio has two main sections:
+
+- Videos
+  - Pre-Wedding
+  - Wedding
+  - Maternity
+- Photos
+  - Pre-Wedding
+  - Wedding
+  - Maternity
+
+Each category opens as a smooth dropdown and displays its media in a horizontal carousel.
+
+## Run Locally
 
 ```powershell
 npm install
@@ -11,38 +24,68 @@ npm run dev
 
 Open the local URL Vite prints in the terminal.
 
-## Build locally
+## Build Locally
 
 ```powershell
 npm run build
 ```
 
-## Deploy on GitHub Pages
+## Google Drive Setup
 
-1. Create a GitHub repository and push this folder to it.
-2. In GitHub, open **Settings > Pages**.
-3. Set **Source** to **GitHub Actions**.
-4. Push to `main` or run the **Deploy GitHub Pages** workflow manually.
+Create six public Google Drive folders:
 
-GitHub Actions will build the React site and publish the generated `dist` folder.
+- Videos / Pre-Wedding
+- Videos / Wedding
+- Videos / Maternity
+- Photos / Pre-Wedding
+- Photos / Wedding
+- Photos / Maternity
 
-## Connect Instagram live media
+Set each folder to **Anyone with the link can view**.
 
-Instagram does not allow a public browser page to scrape or fetch arbitrary profile posts directly. To render live posts, use Meta's official Instagram Graph API and set these environment variables before starting the server:
+Add each folder ID to [public/drive-folders.json](public/drive-folders.json).
 
-```powershell
-$env:IG_GRAPH_ACCESS_TOKEN="your-long-lived-token"
-$env:IG_GRAPH_ACCOUNT_IDS="instagram-business-account-id-1,instagram-business-account-id-2"
-npm start
+Example:
+
+```json
+{
+  "videos": {
+    "preWedding": "GOOGLE_DRIVE_FOLDER_ID",
+    "wedding": "GOOGLE_DRIVE_FOLDER_ID",
+    "maternity": "GOOGLE_DRIVE_FOLDER_ID"
+  },
+  "photos": {
+    "preWedding": "GOOGLE_DRIVE_FOLDER_ID",
+    "wedding": "GOOGLE_DRIVE_FOLDER_ID",
+    "maternity": "GOOGLE_DRIVE_FOLDER_ID"
+  }
+}
 ```
 
-The site currently maps those IDs to:
+The folder ID is the part after `/folders/` in a Google Drive folder URL.
 
-- `https://www.instagram.com/camdownproductions/`
-- `https://www.instagram.com/framingpicturesby_k.s/`
+## Google API Key
 
-Without those credentials, the page shows connected profile cards and explains that the live feed is waiting for API setup.
+The site uses the Google Drive API to list public files from those folders.
 
-GitHub Pages cannot run the Node API route or securely store Instagram access tokens. For live Instagram media, deploy `server.js` to a Node host such as Render, Railway, or Vercel server functions, then point the React app's feed request to that API.
-"# camdownproductions" 
-"# camdownproductions" 
+Create a Google API key with Google Drive API enabled, then add it as a GitHub repository variable:
+
+```text
+VITE_GOOGLE_DRIVE_API_KEY
+```
+
+In GitHub:
+
+1. Open the repo.
+2. Go to **Settings > Secrets and variables > Actions > Variables**.
+3. Add `VITE_GOOGLE_DRIVE_API_KEY`.
+4. Re-run the GitHub Pages workflow.
+
+For safety, restrict the API key in Google Cloud to your GitHub Pages domain.
+
+## Deploy on GitHub Pages
+
+1. Push changes to `main`.
+2. In GitHub, open **Settings > Pages**.
+3. Set **Source** to **GitHub Actions**.
+4. The workflow builds the React app and publishes `dist`.
