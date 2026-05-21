@@ -1,0 +1,31 @@
+{
+  "brand": {
+    "title": "Camdown",
+    "subtitle": "Productions",
+    "tagline": "Beautiful films... beautiful frames"
+  },
+  "hero": {
+    "eyebrow": "Beautiful films... beautiful frames",
+    "title": "Camdown Productions",
+    "body": "Wedding films, photographs, and intimate milestones arranged into a timeless portfolio experience.",
+    "cta": "Explore portfolio"
+  },
+  "intro": {
+    "body": "Select a section, open a category, and move through each story with a smooth horizontal carousel."
+  },
+  "collages": {
+    "eyebrow": "Featured stories",
+    "title": "Recent Collages"
+  },
+  "kindWords": {
+    "eyebrow": "Your kind words",
+    "title": "Stories preserved with care.",
+    "body": "A quiet, elegant space for wedding films, photography, and family milestones."
+  },
+  "contact": {
+    "eyebrow": "Bookings & collaborations",
+    "title": "Bring the next story into frame.",
+    "instagramLabel": "Camdown Instagram",
+    "instagramUrl": "https://www.instagram.com/camdownproductions/"
+  }
+}

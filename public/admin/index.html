@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Camdown Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="dashboard">
+      <section class="hero">
+        <p>Camdown Productions</p>
+        <h1>Website Dashboard</h1>
+        <span>Manage portfolio folders and homepage text without editing code.</span>
+      </section>
+
+      <section class="panel">
+        <h2>GitHub Access</h2>
+        <label>
+          GitHub token
+          <input id="token" type="password" autocomplete="off" placeholder="Fine-grained token with Contents read/write" />
+        </label>
+        <div class="actions">
+          <button id="load">Load Website Data</button>
+          <button id="clear" class="secondary">Clear Token</button>
+        </div>
+        <p class="hint">
+          The token is kept in this browser session only. It needs access to
+          camdownproductions-stack/camdownproductions with Contents read and write.
+        </p>
+      </section>
+
+      <form id="editor" class="editor" hidden>
+        <section class="panel">
+          <h2>Google Drive Folders</h2>
+          <div class="grid two">
+            <label>Videos / Pre-Wedding <input name="videos.preWedding" /></label>
+            <label>Videos / Wedding <input name="videos.wedding" /></label>
+            <label>Videos / Maternity <input name="videos.maternity" /></label>
+            <label>Photos / Pre-Wedding <input name="photos.preWedding" /></label>
+            <label>Photos / Wedding <input name="photos.wedding" /></label>
+            <label>Photos / Maternity <input name="photos.maternity" /></label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Website Text</h2>
+          <div class="grid two">
+            <label>Brand title <input name="brand.title" /></label>
+            <label>Brand subtitle <input name="brand.subtitle" /></label>
+            <label>Brand tagline <input name="brand.tagline" /></label>
+            <label>Hero eyebrow <input name="hero.eyebrow" /></label>
+            <label class="wide">Hero title <input name="hero.title" /></label>
+            <label class="wide">Hero body <textarea name="hero.body"></textarea></label>
+            <label>Hero button <input name="hero.cta" /></label>
+            <label>Collage eyebrow <input name="collages.eyebrow" /></label>
+            <label>Collage title <input name="collages.title" /></label>
+            <label class="wide">Intro text <textarea name="intro.body"></textarea></label>
+            <label>Kind words eyebrow <input name="kindWords.eyebrow" /></label>
+            <label>Kind words title <input name="kindWords.title" /></label>
+            <label class="wide">Kind words body <textarea name="kindWords.body"></textarea></label>
+            <label>Contact eyebrow <input name="contact.eyebrow" /></label>
+            <label>Contact title <input name="contact.title" /></label>
+            <label>Instagram label <input name="contact.instagramLabel" /></label>
+            <label class="wide">Instagram URL <input name="contact.instagramUrl" /></label>
+          </div>
+        </section>
+
+        <section class="panel save-panel">
+          <label>
+            Commit message
+            <input id="message" value="Update website dashboard content" />
+          </label>
+          <button type="submit">Save & Publish</button>
+          <p class="hint">Saving commits JSON changes to GitHub. GitHub Pages redeploys automatically.</p>
+        </section>
+      </form>
+
+      <output id="status" class="status">Ready.</output>
+    </main>
+    <script src="./main.js"></script>
+  </body>
+</html>

@@ -86,6 +86,38 @@ const fallbackMedia = {
   }
 };
 
+const defaultContent = {
+  brand: {
+    title: "Camdown",
+    subtitle: "Productions",
+    tagline: "Beautiful films... beautiful frames"
+  },
+  hero: {
+    eyebrow: "Beautiful films... beautiful frames",
+    title: "Camdown Productions",
+    body: "Wedding films, photographs, and intimate milestones arranged into a timeless portfolio experience.",
+    cta: "Explore portfolio"
+  },
+  intro: {
+    body: "Select a section, open a category, and move through each story with a smooth horizontal carousel."
+  },
+  collages: {
+    eyebrow: "Featured stories",
+    title: "Recent Collages"
+  },
+  kindWords: {
+    eyebrow: "Your kind words",
+    title: "Stories preserved with care.",
+    body: "A quiet, elegant space for wedding films, photography, and family milestones."
+  },
+  contact: {
+    eyebrow: "Bookings & collaborations",
+    title: "Bring the next story into frame.",
+    instagramLabel: "Camdown Instagram",
+    instagramUrl: "https://www.instagram.com/camdownproductions/"
+  }
+};
+
 function heroPlaceholder(label, tone = "dark") {
   const palette =
     tone === "warm"
@@ -143,6 +175,19 @@ async function loadDriveConfig() {
   return response.json();
 }
 
+async function loadSiteContent() {
+  const response = await fetch(`${import.meta.env.BASE_URL}site-content.json`, {
+    cache: "no-store"
+  });
+
+  if (!response.ok) return defaultContent;
+
+  return {
+    ...defaultContent,
+    ...(await response.json())
+  };
+}
+
 async function fetchDriveFolder(folderId, apiKey) {
   if (!folderId) return [];
 
@@ -167,7 +212,7 @@ async function fetchDriveFolder(folderId, apiKey) {
   );
 }
 
-function Header() {
+function Header({ content }) {
   return (
     <header className="site-header" id="top">
       <nav className="nav-group nav-left" aria-label="Primary navigation left">
@@ -186,9 +231,9 @@ function Header() {
         </div>
       </nav>
       <a className="brand" href="#top" aria-label="Camdown Productions home">
-        <span>Camdown</span>
-        <strong>Productions</strong>
-        <small>Beautiful films... beautiful frames</small>
+        <span>{content.brand.title}</span>
+        <strong>{content.brand.subtitle}</strong>
+        <small>{content.brand.tagline}</small>
       </a>
       <nav className="nav-group nav-right" aria-label="Primary navigation right">
         <a href="#portfolio">Portfolio</a>
@@ -199,7 +244,7 @@ function Header() {
   );
 }
 
-function Hero() {
+function Hero({ content }) {
   return (
     <section className="hero">
       <div className="hero-frame" aria-hidden="true">
@@ -208,14 +253,11 @@ function Hero() {
         <span />
       </div>
       <div className="hero-copy">
-        <p className="eyebrow">Beautiful films... beautiful frames</p>
-        <h1>Camdown Productions</h1>
-        <p>
-          Wedding films, photographs, and intimate milestones arranged into a timeless
-          portfolio experience.
-        </p>
+        <p className="eyebrow">{content.hero.eyebrow}</p>
+        <h1>{content.hero.title}</h1>
+        <p>{content.hero.body}</p>
         <a className="hero-link" href="#portfolio">
-          Explore portfolio
+          {content.hero.cta}
         </a>
       </div>
     </section>
@@ -243,7 +285,7 @@ function MediaCard({ item, categoryLabel, onOpen }) {
   );
 }
 
-function FeaturedCollages({ media, onOpen }) {
+function FeaturedCollages({ content, media, onOpen }) {
   function anchorFor(sectionId, categoryId) {
     const anchors = {
       "videos-preWedding": "prewedding-films",
@@ -258,8 +300,8 @@ function FeaturedCollages({ media, onOpen }) {
   return (
     <section className="collage-section" id="portfolio" aria-label="Featured portfolio collages">
       <div className="section-heading">
-        <p className="eyebrow">Featured stories</p>
-        <h2>Recent Collages</h2>
+        <p className="eyebrow">{content.collages.eyebrow}</p>
+        <h2>{content.collages.title}</h2>
       </div>
       <div className="collage-groups">
         {sections.map((section) => {
@@ -409,6 +451,7 @@ function Lightbox({ item, onClose, onNext, onPrevious, total, current }) {
 
 function App() {
   const [media, setMedia] = useState(fallbackMedia);
+  const [content, setContent] = useState(defaultContent);
   const [status, setStatus] = useState("Preparing Google Drive gallery...");
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -502,38 +545,41 @@ function App() {
     loadMedia();
   }, []);
 
+  useEffect(() => {
+    async function loadContent() {
+      setContent(await loadSiteContent());
+    }
+
+    loadContent();
+  }, []);
+
   return (
     <>
-      <Header />
+      <Header content={content} />
       <main>
-        <Hero />
+        <Hero content={content} />
 
-        <FeaturedCollages media={media} onOpen={openItem} />
+        <FeaturedCollages content={content} media={media} onOpen={openItem} />
 
         <section className="intro" id="about" aria-label="Portfolio introduction">
-          <p>
-            Select a section, open a category, and move through each story with a smooth
-            horizontal carousel.
-          </p>
+          <p>{content.intro.body}</p>
           <div className="status" role="status">
             {status} Showing {totalItems} portfolio item{totalItems === 1 ? "" : "s"}.
           </div>
         </section>
 
         <section className="kind-words" id="kind-words">
-          <p className="eyebrow">Your kind words</p>
-          <h2>Stories preserved with care.</h2>
-          <p>
-            A quiet, elegant space for wedding films, photography, and family milestones.
-          </p>
+          <p className="eyebrow">{content.kindWords.eyebrow}</p>
+          <h2>{content.kindWords.title}</h2>
+          <p>{content.kindWords.body}</p>
         </section>
 
         <section className="contact" id="contact">
-          <p className="eyebrow">Bookings & collaborations</p>
-          <h2>Bring the next story into frame.</h2>
+          <p className="eyebrow">{content.contact.eyebrow}</p>
+          <h2>{content.contact.title}</h2>
           <div className="contact-actions">
-            <a href="https://www.instagram.com/camdownproductions/" target="_blank" rel="noreferrer">
-              Camdown Instagram
+            <a href={content.contact.instagramUrl} target="_blank" rel="noreferrer">
+              {content.contact.instagramLabel}
             </a>
           </div>
         </section>

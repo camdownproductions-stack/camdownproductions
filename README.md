@@ -64,6 +64,38 @@ Example:
 
 The folder ID is the part after `/folders/` in a Google Drive folder URL.
 
+## Dashboard
+
+After deployment, open:
+
+```text
+https://camdownproductions-stack.github.io/camdownproductions/admin/
+```
+
+The dashboard lets you update:
+
+- Google Drive folder IDs
+- Brand text
+- Hero text
+- Collage heading
+- Intro text
+- Kind words section
+- Contact Instagram button
+
+To publish from the dashboard, create a GitHub fine-grained personal access token:
+
+1. GitHub > **Settings > Developer settings > Personal access tokens > Fine-grained tokens**
+2. Repository access: `camdownproductions-stack/camdownproductions`
+3. Permissions: **Contents: Read and write**
+4. Paste the token into the dashboard and click **Load Website Data**
+
+The token stays in the browser session and is not stored by the website. Saving from the dashboard commits changes to:
+
+- [public/drive-folders.json](public/drive-folders.json)
+- [public/site-content.json](public/site-content.json)
+
+GitHub Pages redeploys automatically after the commit.
+
 ## Google API Key
 
 The site uses the Google Drive API to list public files from those folders.
