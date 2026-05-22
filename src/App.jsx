@@ -87,6 +87,26 @@ const fallbackMedia = {
 };
 
 const defaultContent = {
+  navigation: {
+    left: [
+      { label: "Home", href: "#top" },
+      { label: "About", href: "#about" }
+    ],
+    portfolio: [
+      { label: "Wedding Photography", href: "#photos" },
+      { label: "Wedding Films", href: "#videos" },
+      { label: "PreWedding Films", href: "#prewedding-films" },
+      { label: "PreWedding Pictures", href: "#prewedding-pictures" },
+      { label: "Maternity Videos", href: "#maternity-videos" },
+      { label: "Maternity Pictures", href: "#maternity-pictures" }
+    ],
+    right: [
+      { label: "Portfolio", href: "#portfolio" },
+      { label: "Blogs", href: "#blogs" },
+      { label: "Kind Words", href: "#kind-words" },
+      { label: "Contact", href: "#contact" }
+    ]
+  },
   brand: {
     title: "Camdown",
     subtitle: "Productions",
@@ -115,8 +135,60 @@ const defaultContent = {
     title: "Bring the next story into frame.",
     instagramLabel: "Camdown Instagram",
     instagramUrl: "https://www.instagram.com/camdownproductions/"
-  }
+  },
+  blogs: [
+    {
+      title: "Planning a Cinematic Wedding Film",
+      category: "Wedding Films",
+      excerpt: "A short guide to choosing moments, locations, and pacing for a film that feels personal.",
+      image: "",
+      url: "#contact"
+    },
+    {
+      title: "Pre-Wedding Session Ideas",
+      category: "Pre-Wedding",
+      excerpt: "Simple ways to shape a pre-wedding shoot around your story, not a template.",
+      image: "",
+      url: "#portfolio"
+    }
+  ]
 };
+
+function mergeContent(content) {
+  return {
+    ...defaultContent,
+    ...content,
+    navigation: {
+      ...defaultContent.navigation,
+      ...(content.navigation || {})
+    },
+    brand: {
+      ...defaultContent.brand,
+      ...(content.brand || {})
+    },
+    hero: {
+      ...defaultContent.hero,
+      ...(content.hero || {})
+    },
+    intro: {
+      ...defaultContent.intro,
+      ...(content.intro || {})
+    },
+    collages: {
+      ...defaultContent.collages,
+      ...(content.collages || {})
+    },
+    kindWords: {
+      ...defaultContent.kindWords,
+      ...(content.kindWords || {})
+    },
+    contact: {
+      ...defaultContent.contact,
+      ...(content.contact || {})
+    },
+    blogs: content.blogs || defaultContent.blogs
+  };
+}
 
 function heroPlaceholder(label, tone = "dark") {
   const palette =
@@ -182,10 +254,7 @@ async function loadSiteContent() {
 
   if (!response.ok) return defaultContent;
 
-  return {
-    ...defaultContent,
-    ...(await response.json())
-  };
+  return mergeContent(await response.json());
 }
 
 async function fetchDriveFolder(folderId, apiKey) {
@@ -216,17 +285,19 @@ function Header({ content }) {
   return (
     <header className="site-header" id="top">
       <nav className="nav-group nav-left" aria-label="Primary navigation left">
-        <a href="#top">Home</a>
-        <a href="#about">About</a>
+        {content.navigation.left.map((item) => (
+          <a href={item.href} key={`${item.label}-${item.href}`}>
+            {item.label}
+          </a>
+        ))}
         <div className="menu-dropdown">
           <a className="dropdown-trigger" href="#portfolio">Portfolio</a>
           <div className="dropdown-panel" aria-label="Portfolio submenu">
-            <a href="#photos">Wedding Photography</a>
-            <a href="#videos">Wedding Films</a>
-            <a href="#prewedding-films">PreWedding Films</a>
-            <a href="#prewedding-pictures">PreWedding Pictures</a>
-            <a href="#maternity-videos">Maternity Videos</a>
-            <a href="#maternity-pictures">Maternity Pictures</a>
+            {content.navigation.portfolio.map((item) => (
+              <a href={item.href} key={`${item.label}-${item.href}`}>
+                {item.label}
+              </a>
+            ))}
           </div>
         </div>
       </nav>
@@ -236,9 +307,11 @@ function Header({ content }) {
         <small>{content.brand.tagline}</small>
       </a>
       <nav className="nav-group nav-right" aria-label="Primary navigation right">
-        <a href="#portfolio">Portfolio</a>
-        <a href="#kind-words">Kind Words</a>
-        <a href="#contact">Contact</a>
+        {content.navigation.right.map((item) => (
+          <a href={item.href} key={`${item.label}-${item.href}`}>
+            {item.label}
+          </a>
+        ))}
       </nav>
     </header>
   );
@@ -449,9 +522,42 @@ function Lightbox({ item, onClose, onNext, onPrevious, total, current }) {
   );
 }
 
+function BlogSection({ blogs }) {
+  if (!blogs.length) return null;
+
+  return (
+    <section className="blogs" id="blogs">
+      <div className="section-heading">
+        <p className="eyebrow">Journal</p>
+        <h2>Blogs</h2>
+      </div>
+      <div className="blog-grid">
+        {blogs.map((blog, index) => (
+          <article className="blog-card" key={`${blog.title}-${index}`}>
+            <img src={blog.image || heroPlaceholder(blog.category || "Blog", "warm")} alt={blog.title} />
+            <div>
+              <p className="meta">
+                <span>{blog.category || "Blog"}</span>
+                <span>Story</span>
+              </p>
+              <h3>{blog.title}</h3>
+              <p>{blog.excerpt}</p>
+              {blog.url ? (
+                <a href={blog.url} target={blog.url.startsWith("#") ? undefined : "_blank"} rel="noreferrer">
+                  Read more
+                </a>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const [media, setMedia] = useState(fallbackMedia);
-  const [content, setContent] = useState(defaultContent);
+  const [content, setContent] = useState(mergeContent({}));
   const [status, setStatus] = useState("Preparing Google Drive gallery...");
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -573,6 +679,8 @@ function App() {
           <h2>{content.kindWords.title}</h2>
           <p>{content.kindWords.body}</p>
         </section>
+
+        <BlogSection blogs={content.blogs} />
 
         <section className="contact" id="contact">
           <p className="eyebrow">{content.contact.eyebrow}</p>

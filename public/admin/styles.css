@@ -63,6 +63,14 @@ h2 {
   text-transform: uppercase;
 }
 
+h3 {
+  margin: 0 0 14px;
+  font-family: Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
 label {
   display: grid;
   gap: 8px;
@@ -91,6 +99,34 @@ textarea {
 .grid {
   display: grid;
   gap: 18px;
+}
+
+.repeaters {
+  display: grid;
+  gap: 28px;
+}
+
+.repeater {
+  display: grid;
+  gap: 12px;
+}
+
+.repeater-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+  border: 1px solid var(--line);
+  padding: 14px;
+  background: #fff;
+}
+
+.blog-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+}
+
+.blog-row .wide {
+  grid-column: 1 / 3;
 }
 
 .two {
@@ -129,6 +165,11 @@ button.secondary {
   color: var(--ink);
 }
 
+.remove-row {
+  background: transparent;
+  color: #9f503c;
+}
+
 .hint {
   margin-bottom: 0;
   line-height: 1.6;
@@ -141,7 +182,13 @@ button.secondary {
 }
 
 @media (max-width: 720px) {
-  .two {
+  .two,
+  .repeater-row,
+  .blog-row {
     grid-template-columns: 1fr;
+  }
+
+  .blog-row .wide {
+    grid-column: auto;
   }
 }

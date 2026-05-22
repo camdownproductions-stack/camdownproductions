@@ -11,7 +11,7 @@
       <section class="hero">
         <p>Camdown Productions</p>
         <h1>Website Dashboard</h1>
-        <span>Manage portfolio folders and homepage text without editing code.</span>
+        <span>Manage menus, blogs, content, and portfolio folders without editing code.</span>
       </section>
 
       <section class="panel">
@@ -41,6 +41,33 @@
             <label>Photos / Wedding <input name="photos.wedding" /></label>
             <label>Photos / Maternity <input name="photos.maternity" /></label>
           </div>
+        </section>
+
+        <section class="panel">
+          <h2>Menus</h2>
+          <div class="repeaters">
+            <div>
+              <h3>Left Menu</h3>
+              <div id="nav-left" class="repeater"></div>
+              <button type="button" class="secondary add-row" data-list="nav-left">Add Left Menu Item</button>
+            </div>
+            <div>
+              <h3>Portfolio Dropdown</h3>
+              <div id="nav-portfolio" class="repeater"></div>
+              <button type="button" class="secondary add-row" data-list="nav-portfolio">Add Portfolio Item</button>
+            </div>
+            <div>
+              <h3>Right Menu</h3>
+              <div id="nav-right" class="repeater"></div>
+              <button type="button" class="secondary add-row" data-list="nav-right">Add Right Menu Item</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Blogs</h2>
+          <div id="blogs" class="repeater"></div>
+          <button type="button" class="secondary add-row" data-list="blogs">Add Blog</button>
         </section>
 
         <section class="panel">

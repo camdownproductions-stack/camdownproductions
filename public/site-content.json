@@ -1,4 +1,60 @@
 {
+  "navigation": {
+    "left": [
+      {
+        "label": "Home",
+        "href": "#top"
+      },
+      {
+        "label": "About",
+        "href": "#about"
+      }
+    ],
+    "portfolio": [
+      {
+        "label": "Wedding Photography",
+        "href": "#photos"
+      },
+      {
+        "label": "Wedding Films",
+        "href": "#videos"
+      },
+      {
+        "label": "PreWedding Films",
+        "href": "#prewedding-films"
+      },
+      {
+        "label": "PreWedding Pictures",
+        "href": "#prewedding-pictures"
+      },
+      {
+        "label": "Maternity Videos",
+        "href": "#maternity-videos"
+      },
+      {
+        "label": "Maternity Pictures",
+        "href": "#maternity-pictures"
+      }
+    ],
+    "right": [
+      {
+        "label": "Portfolio",
+        "href": "#portfolio"
+      },
+      {
+        "label": "Blogs",
+        "href": "#blogs"
+      },
+      {
+        "label": "Kind Words",
+        "href": "#kind-words"
+      },
+      {
+        "label": "Contact",
+        "href": "#contact"
+      }
+    ]
+  },
   "brand": {
     "title": "Camdown",
     "subtitle": "Productions",
@@ -27,5 +83,21 @@
     "title": "Bring the next story into frame.",
     "instagramLabel": "Camdown Instagram",
     "instagramUrl": "https://www.instagram.com/camdownproductions/"
-  }
+  },
+  "blogs": [
+    {
+      "title": "Planning a Cinematic Wedding Film",
+      "category": "Wedding Films",
+      "excerpt": "A short guide to choosing moments, locations, and pacing for a film that feels personal.",
+      "image": "",
+      "url": "#contact"
+    },
+    {
+      "title": "Pre-Wedding Session Ideas",
+      "category": "Pre-Wedding",
+      "excerpt": "Simple ways to shape a pre-wedding shoot around your story, not a template.",
+      "image": "",
+      "url": "#portfolio"
+    }
+  ]
 }

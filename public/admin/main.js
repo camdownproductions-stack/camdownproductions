@@ -7,6 +7,15 @@ const files = {
   content: "public/site-content.json"
 };
 
+const defaultContent = {
+  navigation: {
+    left: [],
+    portfolio: [],
+    right: []
+  },
+  blogs: []
+};
+
 const state = {
   token: "",
   folders: null,
@@ -20,6 +29,13 @@ const clearButton = document.querySelector("#clear");
 const editor = document.querySelector("#editor");
 const statusBox = document.querySelector("#status");
 const messageInput = document.querySelector("#message");
+
+const repeaters = {
+  "nav-left": document.querySelector("#nav-left"),
+  "nav-portfolio": document.querySelector("#nav-portfolio"),
+  "nav-right": document.querySelector("#nav-right"),
+  blogs: document.querySelector("#blogs")
+};
 
 function setStatus(message) {
   statusBox.textContent = message;
@@ -92,7 +108,69 @@ async function saveJson(key, data, message) {
   state.sha[key] = file.content.sha;
 }
 
+function navRow(item = { label: "", href: "" }) {
+  const row = document.createElement("div");
+  row.className = "repeater-row";
+  row.innerHTML = `
+    <label>Label <input data-field="label" value="${escapeHtml(item.label || "")}" /></label>
+    <label>Link <input data-field="href" value="${escapeHtml(item.href || "")}" /></label>
+    <button type="button" class="remove-row">Remove</button>
+  `;
+  return row;
+}
+
+function blogRow(item = { title: "", category: "", excerpt: "", image: "", url: "" }) {
+  const row = document.createElement("div");
+  row.className = "repeater-row blog-row";
+  row.innerHTML = `
+    <label>Title <input data-field="title" value="${escapeHtml(item.title || "")}" /></label>
+    <label>Category <input data-field="category" value="${escapeHtml(item.category || "")}" /></label>
+    <label class="wide">Excerpt <textarea data-field="excerpt">${escapeHtml(item.excerpt || "")}</textarea></label>
+    <label>Image URL <input data-field="image" value="${escapeHtml(item.image || "")}" /></label>
+    <label>Read More URL <input data-field="url" value="${escapeHtml(item.url || "")}" /></label>
+    <button type="button" class="remove-row">Remove</button>
+  `;
+  return row;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function renderRepeater(target, items, createRow) {
+  target.innerHTML = "";
+  items.forEach((item) => target.append(createRow(item)));
+}
+
+function readRows(target) {
+  return [...target.querySelectorAll(".repeater-row")]
+    .map((row) => {
+      const item = {};
+      row.querySelectorAll("[data-field]").forEach((field) => {
+        item[field.dataset.field] = field.value.trim();
+      });
+      return item;
+    })
+    .filter((item) => Object.values(item).some(Boolean));
+}
+
 function fillForm() {
+  const content = {
+    ...defaultContent,
+    ...state.content,
+    navigation: {
+      ...defaultContent.navigation,
+      ...(state.content.navigation || {})
+    },
+    blogs: state.content.blogs || []
+  };
+
+  state.content = content;
+
   editor.querySelectorAll("[name]").forEach((field) => {
     const source = field.name.startsWith("videos.") || field.name.startsWith("photos.")
       ? state.folders
@@ -100,6 +178,11 @@ function fillForm() {
 
     field.value = getPathValue(source, field.name);
   });
+
+  renderRepeater(repeaters["nav-left"], content.navigation.left, navRow);
+  renderRepeater(repeaters["nav-portfolio"], content.navigation.portfolio, navRow);
+  renderRepeater(repeaters["nav-right"], content.navigation.right, navRow);
+  renderRepeater(repeaters.blogs, content.blogs, blogRow);
 }
 
 function collectForm() {
@@ -113,6 +196,13 @@ function collectForm() {
 
     setPathValue(target, field.name, field.value);
   });
+
+  content.navigation = {
+    left: readRows(repeaters["nav-left"]),
+    portfolio: readRows(repeaters["nav-portfolio"]),
+    right: readRows(repeaters["nav-right"])
+  };
+  content.blogs = readRows(repeaters.blogs);
 
   return { folders, content };
 }
@@ -132,7 +222,7 @@ loadButton.addEventListener("click", async () => {
     state.content = content;
     fillForm();
     editor.hidden = false;
-    setStatus("Loaded. You can edit and publish now.");
+    setStatus("Loaded. You can add, remove, edit, and publish now.");
   } catch (error) {
     setStatus(`Could not load data: ${error.message}`);
   }
@@ -143,6 +233,20 @@ clearButton.addEventListener("click", () => {
   state.token = "";
   editor.hidden = true;
   setStatus("Token cleared.");
+});
+
+document.addEventListener("click", (event) => {
+  const addButton = event.target.closest(".add-row");
+  const removeButton = event.target.closest(".remove-row");
+
+  if (addButton) {
+    const list = addButton.dataset.list;
+    repeaters[list].append(list === "blogs" ? blogRow() : navRow());
+  }
+
+  if (removeButton) {
+    removeButton.closest(".repeater-row")?.remove();
+  }
 });
 
 editor.addEventListener("submit", async (event) => {
@@ -158,7 +262,7 @@ editor.addEventListener("submit", async (event) => {
 
     state.folders = folders;
     state.content = content;
-    setStatus("Saved. GitHub Pages will redeploy the website automatically.");
+    setStatus("Saved. Your hosting platform will redeploy the website automatically.");
   } catch (error) {
     setStatus(`Could not save changes: ${error.message}`);
   }

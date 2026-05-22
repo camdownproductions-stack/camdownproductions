@@ -279,6 +279,7 @@ h3 {
 .portfolio-wrap,
 .portfolio-section,
 .kind-words,
+.blogs,
 .contact {
   padding: clamp(64px, 9vw, 124px) clamp(20px, 5vw, 64px);
 }
@@ -422,6 +423,50 @@ h3 {
   margin: 20px auto 0;
   color: var(--muted);
   line-height: 1.7;
+}
+
+.blogs {
+  background: #f3eee8;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 3vw, 34px);
+}
+
+.blog-card {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.72fr) 1fr;
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.blog-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: cover;
+}
+
+.blog-card > div {
+  padding: clamp(22px, 4vw, 36px);
+}
+
+.blog-card p:not(.meta) {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.blog-card a {
+  display: inline-flex;
+  margin-top: 16px;
+  color: var(--accent);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .section-heading {
@@ -806,6 +851,11 @@ footer {
   }
 
   .collage-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-grid,
+  .blog-card {
     grid-template-columns: 1fr;
   }
 

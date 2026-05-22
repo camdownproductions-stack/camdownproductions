@@ -75,6 +75,8 @@ https://camdownproductions-stack.github.io/camdownproductions/admin/
 The dashboard lets you update:
 
 - Google Drive folder IDs
+- Menu items and Portfolio dropdown links
+- Blog posts
 - Brand text
 - Hero text
 - Collage heading
