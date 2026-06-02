@@ -257,7 +257,7 @@ async function loadSiteContent() {
   return mergeContent(await response.json());
 }
 
-async function fetchDriveFolder(folderId, apiKey) {
+async function fetchDriveFolder(folderId, apiKey, sectionId) {
   if (!folderId) return [];
 
   const query = `'${folderId}' in parents and trashed = false`;
@@ -276,8 +276,10 @@ async function fetchDriveFolder(folderId, apiKey) {
     throw new Error(data.error?.message || "Google Drive media could not be loaded.");
   }
 
-  return (data.files || []).filter(
-    (file) => file.mimeType?.startsWith("image/") || file.mimeType?.startsWith("video/")
+  return (data.files || []).filter((file) =>
+    sectionId === "photos"
+      ? file.mimeType?.startsWith("image/")
+      : file.mimeType?.startsWith("video/")
   );
 }
 
@@ -337,13 +339,13 @@ function Hero({ content }) {
   );
 }
 
-function MediaCard({ item, categoryLabel, onOpen }) {
+function MediaCard({ item, categoryLabel, galleryItems, onOpen }) {
   const title = cleanName(item.name);
   const video = isVideo(item);
 
   return (
     <article className="media-card">
-      <button className="media-thumb" type="button" onClick={() => onOpen(item)}>
+      <button className="media-thumb" type="button" onClick={() => onOpen(item, galleryItems)}>
         <img src={imageUrl(item, categoryLabel)} alt={title} loading="lazy" />
         {video ? <span className="play-mark">Play</span> : null}
       </button>
@@ -382,9 +384,11 @@ function FeaturedCollages({ content, media, onOpen }) {
             (media[section.id]?.[category.id] || []).slice(0, 3).map((item, itemIndex) => ({
               ...item,
               categoryLabel: category.label,
+              sectionLabel: section.title,
               anchorId: itemIndex === 0 ? anchorFor(section.id, category.id) : undefined
             }))
           );
+          const visibleTiles = tiles.slice(0, 6);
 
           return (
             <article className="collage-group" id={section.id} key={section.id}>
@@ -393,13 +397,13 @@ function FeaturedCollages({ content, media, onOpen }) {
                 <h3>{section.title}</h3>
               </div>
               <div className="collage-grid">
-                {tiles.slice(0, 6).map((item, index) => (
+                {visibleTiles.map((item, index) => (
                   <button
                     className={`collage-tile tile-${index + 1}`}
                     id={item.anchorId || undefined}
                     type="button"
                     key={`${section.id}-${item.categoryLabel}-${item.id}`}
-                    onClick={() => onOpen(item)}
+                    onClick={() => onOpen(item, visibleTiles)}
                   >
                     <img src={imageUrl(item, item.categoryLabel)} alt={cleanName(item.name)} />
                     <span>
@@ -418,6 +422,10 @@ function FeaturedCollages({ content, media, onOpen }) {
 
 function CategoryPanel({ panelId, sectionId, category, items, defaultOpen, onOpen }) {
   const carouselId = `${sectionId}-${category.id}`;
+  const galleryItems = items.map((item) => ({
+    ...item,
+    categoryLabel: category.label
+  }));
 
   function scroll(direction) {
     const carousel = document.getElementById(carouselId);
@@ -438,11 +446,12 @@ function CategoryPanel({ panelId, sectionId, category, items, defaultOpen, onOpe
           Prev
         </button>
         <div className="media-carousel" id={carouselId}>
-          {items.map((item) => (
+          {galleryItems.map((item) => (
             <MediaCard
               key={item.id}
               item={item}
               categoryLabel={category.label}
+              galleryItems={galleryItems}
               onOpen={onOpen}
             />
           ))}
@@ -491,13 +500,13 @@ function Lightbox({ item, onClose, onNext, onPrevious, total, current }) {
     <div className="lightbox" role="dialog" aria-modal="true" aria-label={title}>
       <button className="lightbox-backdrop" type="button" onClick={onClose} aria-label="Close" />
       <div className="lightbox-panel">
-        <button className="lightbox-close" type="button" onClick={onClose}>
-          Close
+        <button className="lightbox-close" type="button" onClick={onClose} aria-label="Close popup">
+          <span aria-hidden="true">x</span>
         </button>
-        <button className="lightbox-nav lightbox-prev" type="button" onClick={onPrevious}>
+        <button className="lightbox-nav lightbox-prev" type="button" onClick={onPrevious} aria-label="Previous item">
           Previous
         </button>
-        <button className="lightbox-nav lightbox-next" type="button" onClick={onNext}>
+        <button className="lightbox-nav lightbox-next" type="button" onClick={onNext} aria-label="Next item">
           Next
         </button>
         {video && embed ? (
@@ -507,7 +516,7 @@ function Lightbox({ item, onClose, onNext, onPrevious, total, current }) {
         )}
         <div>
           <p className="meta">
-            <span>{video ? "Video" : "Photo"}</span>
+            <span>{video ? "Video" : "Photo"}{item.categoryLabel ? ` / ${item.categoryLabel}` : ""}</span>
             <span>
               {current + 1} / {total}
             </span>
@@ -559,6 +568,7 @@ function App() {
   const [media, setMedia] = useState(fallbackMedia);
   const [content, setContent] = useState(mergeContent({}));
   const [status, setStatus] = useState("Preparing Google Drive gallery...");
+  const [activeGallery, setActiveGallery] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
 
   const allItems = useMemo(
@@ -575,26 +585,29 @@ function App() {
     [media]
   );
 
-  const activeItem = activeIndex === null ? null : allItems[activeIndex];
+  const activeItem = activeIndex === null ? null : activeGallery[activeIndex];
 
-  function openItem(item) {
-    const index = allItems.findIndex(
+  function openItem(item, galleryItems = allItems) {
+    const nextGallery = galleryItems.length ? galleryItems : allItems;
+    const index = nextGallery.findIndex(
       (candidate) => candidate.id === item.id && candidate.name === item.name
     );
+    setActiveGallery(nextGallery);
     setActiveIndex(index >= 0 ? index : 0);
   }
 
   function closeLightbox() {
     setActiveIndex(null);
+    setActiveGallery([]);
   }
 
   function nextItem() {
-    setActiveIndex((index) => (index === null ? 0 : (index + 1) % allItems.length));
+    setActiveIndex((index) => (index === null ? 0 : (index + 1) % activeGallery.length));
   }
 
   function previousItem() {
     setActiveIndex((index) =>
-      index === null ? 0 : (index - 1 + allItems.length) % allItems.length
+      index === null ? 0 : (index - 1 + activeGallery.length) % activeGallery.length
     );
   }
 
@@ -632,7 +645,7 @@ function App() {
           sections.flatMap((section) =>
             section.categories.map(async (category) => {
               const folderId = config?.[section.id]?.[category.id];
-              const files = await fetchDriveFolder(folderId, apiKey);
+              const files = await fetchDriveFolder(folderId, apiKey, section.id);
               nextMedia[section.id] = nextMedia[section.id] || {};
               nextMedia[section.id][category.id] = files.length
                 ? files
@@ -659,6 +672,25 @@ function App() {
     loadContent();
   }, []);
 
+  useEffect(() => {
+    if (!activeItem) return undefined;
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") closeLightbox();
+      if (event.key === "ArrowRight") nextItem();
+      if (event.key === "ArrowLeft") previousItem();
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeItem, activeGallery.length]);
+
   return (
     <>
       <Header content={content} />
@@ -673,6 +705,17 @@ function App() {
             {status} Showing {totalItems} portfolio item{totalItems === 1 ? "" : "s"}.
           </div>
         </section>
+
+        <div className="portfolio-wrap">
+          {sections.map((section) => (
+            <PortfolioSection
+              key={section.id}
+              section={section}
+              media={media}
+              onOpen={openItem}
+            />
+          ))}
+        </div>
 
         <section className="kind-words" id="kind-words">
           <p className="eyebrow">{content.kindWords.eyebrow}</p>
@@ -702,7 +745,7 @@ function App() {
         onClose={closeLightbox}
         onNext={nextItem}
         onPrevious={previousItem}
-        total={allItems.length}
+        total={activeGallery.length}
         current={activeIndex || 0}
       />
     </>
